@@ -1,0 +1,36 @@
+// Builds the GhidraAgent extension for a given Ghidra installation.
+//
+// Set GHIDRA_INSTALL_DIR to your Ghidra installation path:
+//
+//     export GHIDRA_INSTALL_DIR=/path/to/ghidra_12.1_DEV
+//     gradle
+//
+//         or
+//
+//     gradle -PGHIDRA_INSTALL_DIR=/path/to/ghidra_12.1_DEV
+
+//----------------------START "DO NOT MODIFY" SECTION------------------------------
+def ghidraInstallDir
+
+if (System.env.GHIDRA_INSTALL_DIR) {
+	ghidraInstallDir = System.env.GHIDRA_INSTALL_DIR
+}
+else if (project.hasProperty("GHIDRA_INSTALL_DIR")) {
+	ghidraInstallDir = project.getProperty("GHIDRA_INSTALL_DIR")
+}
+
+if (ghidraInstallDir == null) {
+	throw new GradleException("GHIDRA_INSTALL_DIR is not set. " +
+		"Set it via environment variable or -PGHIDRA_INSTALL_DIR=...")
+}
+
+apply from: new File(ghidraInstallDir).getCanonicalPath() + "/support/buildExtension.gradle"
+//----------------------END "DO NOT MODIFY" SECTION-------------------------------
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// Gson is provided transitively by Ghidra — no extra dep needed
+}

@@ -2,6 +2,10 @@
 
 An AI agent plugin for [Ghidra](https://ghidra-sre.org/) that lets you analyze binaries using natural language. Supports any OpenAI-compatible LLM — Claude, GPT-4o, Ollama, LM Studio, etc.
 
+
+![Screenshot](assets/screenshot_1.png)
+
+
 ## Features
 
 - **18 built-in tools**: decompile functions, rename symbols, detect vulnerabilities, recover data types, search bytes/strings, emulate code, and more

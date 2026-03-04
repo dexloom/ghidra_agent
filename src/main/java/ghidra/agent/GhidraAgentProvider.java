@@ -219,7 +219,11 @@ public class GhidraAgentProvider extends ComponentProviderAdapter {
 			plugin.getTool().getProject(),
 			TaskMonitor.DUMMY));
 
-		runner.submit(text, AgentRunner.buildSystemPrompt(currentProgram));
+		String customPrompt = plugin.getSystemPrompt();
+		String systemPrompt = customPrompt.isBlank()
+				? AgentRunner.buildSystemPrompt(currentProgram)
+				: customPrompt;
+		runner.submit(text, systemPrompt);
 	}
 
 	private void setInputEnabled(boolean enabled) {

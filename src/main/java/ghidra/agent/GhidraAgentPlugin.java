@@ -15,9 +15,14 @@
  */
 package ghidra.agent;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
 import ghidra.app.events.ProgramActivatedPluginEvent;
 import ghidra.app.plugin.PluginCategoryNames;
 import ghidra.app.services.ProgramManager;
+import ghidra.framework.options.OptionType;
 import ghidra.framework.options.ToolOptions;
 import ghidra.framework.plugintool.*;
 import ghidra.framework.plugintool.util.PluginStatus;
@@ -42,6 +47,7 @@ public class GhidraAgentPlugin extends Plugin {
 	static final String OPTION_BASE_URL = "LLM Base URL";
 	static final String OPTION_MODEL = "LLM Model";
 	static final String OPTION_API_KEY = "LLM API Key";
+	static final String OPTION_SYSTEM_PROMPT = "System Prompt";
 
 	static final String DEFAULT_BASE_URL = "https://api.openai.com/v1";
 	static final String DEFAULT_MODEL = "gpt-4o";
@@ -66,6 +72,9 @@ public class GhidraAgentPlugin extends Plugin {
 		options.registerOption(OPTION_API_KEY, "", null,
 			"API key for the LLM provider. Leave blank if using a local server that " +
 				"does not require authentication.");
+		options.registerOption(OPTION_SYSTEM_PROMPT, OptionType.FILE_TYPE, null, null,
+			"Path to a text file that replaces the default system prompt entirely. " +
+				"If unset or the file is missing, the built-in system prompt is used.");
 	}
 
 	/** Called by GhidraAgentProvider when it needs the current LLM configuration */
@@ -79,6 +88,19 @@ public class GhidraAgentPlugin extends Plugin {
 
 	String getLLMApiKey() {
 		return tool.getOptions(OPTIONS_CATEGORY).getString(OPTION_API_KEY, "");
+	}
+
+	String getSystemPrompt() {
+		File file = tool.getOptions(OPTIONS_CATEGORY).getFile(OPTION_SYSTEM_PROMPT, null);
+		if (file == null || !file.exists()) {
+			return "";
+		}
+		try {
+			return Files.readString(file.toPath());
+		}
+		catch (IOException e) {
+			return "";
+		}
 	}
 
 	@Override
